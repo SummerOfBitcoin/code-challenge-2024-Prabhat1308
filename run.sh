@@ -1,1 +1,2 @@
-# Update this file to run your own code
+# RUST                                                                          
+cargo run --manifest-path ./solution/Cargo.toml
