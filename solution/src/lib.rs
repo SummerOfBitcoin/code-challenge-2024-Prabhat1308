@@ -9,7 +9,7 @@ use std::path::Path;
 #[derive(Deserialize)]
 struct Transaction {
   version : u32 ,
-  locktime : u32 ,
+  locktime : u64 ,
   vin : Vec<Input>,
   vout : Vec<Output>,
 }
@@ -17,13 +17,13 @@ struct Transaction {
 #[derive(Deserialize)]
 struct Input {
   txid : String ,
-  vout : u32 ,
-  prevout : Vec<PrevOut> ,
+  vout : u64 ,
+  prevout : PrevOut ,
   scriptsig: String,
   scriptsig_asm: String,
-  witness : Vec<String>,
+  witness : Option<Vec<String>>,
   is_coinbase : bool,
-  sequence : u32 ,
+  sequence : u64 ,
 }
 
 
@@ -32,8 +32,8 @@ struct PrevOut {
   scriptpubkey: String,
   scriptpubkey_asm: String,
   scriptpubkey_type: String,
-  scriptpubkey_address: String,
-  value: u32 ,
+  scriptpubkey_address: Option<String>,
+  value: u64 ,
   
 }
 
@@ -42,8 +42,8 @@ struct Output {
   scriptpubkey: String,
   scriptpubkey_asm: String,
   scriptpubkey_type: String,
-  scriptpubkey_address: String,
-  value: u32 ,
+  scriptpubkey_address: Option<String>,
+  value: u64 ,
 }
 
 
@@ -55,16 +55,17 @@ pub fn run() {
 
     for entry in fs::read_dir("../mempool").unwrap() {
         
+        // println!("{}",total_tx);
         let tx : Transaction = serde_json::from_str(&fs::read_to_string(entry.unwrap().path()).unwrap()).unwrap();
         
-        let tx_version = tx.version;
+        // let tx_version = tx.version;
         
         // if tx_version == 1 {
         //     ver_1 += 1;
         // } else if tx_version == 2 {
         //     ver_2 += 1;
         // }
-        // total_tx += 1;
+        
     }
 
     // println!("Total transactions: {}", total_tx);
