@@ -1,3 +1,5 @@
+use solution::run;
+
 fn main() {
-    println!("Hello, world!");
+   run();
 }
