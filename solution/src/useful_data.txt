@@ -1,0 +1,294 @@
+ /*
+    Type: op_return, ASM: OP_RETURN OP_PUSHBYTES_17 52554e45414c5048415f5354414b494e47 OP_PUSHBYTES_9 633832393730383532 OP_PUSHBYTES_4 31303030 // makes a transaction output unspendable
+    Type: v0_p2wsh, ASM: OP_0 OP_PUSHBYTES_32 4c8ce733a7bd192be6276cdd8886ef2436c1ed5e030edf0665667d38818cfbdd
+    Type: v1_p2tr, ASM: OP_PUSHNUM_1 OP_PUSHBYTES_32 c86028af3a20c1d42082aaeab29f004c3f758f9101a351b444c09dbbe111e6ef
+    Type: v0_p2wpkh, ASM: OP_0 OP_PUSHBYTES_20 c4e860623ed64a072112c243f91ed073a4719ae2
+    Type: p2pkh, ASM: OP_DUP OP_HASH160 OP_PUSHBYTES_20 4e30f8fd336a83e1d6910fb9713d21f6dda1ff5a OP_EQUALVERIFY OP_CHECKSIG
+    Type: p2sh, ASM: OP_HASH160 OP_PUSHBYTES_20 f15ac47ae6eb8f8da450ba7787b6a8c0059b0760 OP_EQUAL
+    Type: unknown, ASM: OP_PUSHNUM_1 OP_PUSHBYTES_33 02f02ed55e2a69a1eb22ddb09d1e529da763bf05a7c8e7be4d970cc465ca5bd84b OP_PUSHBYTES_33 02526d029b962adae519bdddf424f7ebf3099f97e5e54a42f0eb41a9f156960f1a OP_PUSHBYTES_33 020202020202020202020202020202020202020202020202020202020202020202 OP_PUSHNUM_3 OP_CHECKMULTISIG // all unknowns are in vout
+*/
+
+//return serialised coinbase transaction
+
+//MANUAL DECODING OF A COINBASE TRANSACTION (V2 SEGWIT)
+/*
+02000000
+00
+01
+01
+0000000000000000000000000000000000000000000000000000000000000000
+ffffffff
+0f // coinbase size
+032cca020a2f7369676e65743a332f //COINBASE
+feffffff //sequence
+02
+a5fd052a01000000 value of the output
+22
+51207099e4b23427fc40ba4777bbf52cfd0b7444d69a3e21ef281270723f54c0c14b
+0000000000000000 value of the output
+77
+6a24aa21a9edc32933b69752984b6bd38f53b554b01adfaf0bd2d2f097e413c80153400db7764c4fecc7daa24900473044022055188511f975d88c04b483fab9454184b0e7f65409298eaa2c19eda7c7a7f5e9022069eb1cc205c98594334aec33e2fc8d997381e8ebb5839b9b3e0e99e5b57a6bb10100 //op_return
+01
+20 // witness size
+0000000000000000000000000000000000000000000000000000000000000000 ? witness
+00000000 // locktime
+*/
+
+/*
+Total transactions: 8131
+Version 1 transactions: 2259
+Version 2 transactions: 5872
+*/
+
+// Sample block from signet
+
+/*
+{
+  "hash": "000000b99cf68cf948929e7049c76ac850bcee358b93ecf7a1ca9b025549cf72",
+  "confirmations": 7071,
+  "height": 182828,
+  "version": 536870912,
+  "versionHex": "20000000",
+  "merkleroot": "1c66ef9ddd32c82f34c46957dbdbb47c82b65339ef6cd4c887f4439a6c1bcfb8",
+  "time": 1708050260,
+  "mediantime": 1708049317,
+  "nonce": 13213614,
+  "bits": "1e014bc9",
+  "difficulty": 0.003013952620765979,
+  "chainwork": "0000000000000000000000000000000000000000000000000000020f95dc936d",
+  "nTx": 3,
+  "previousblockhash": "000000686b1557eb6752233848c72e20edeb4c9aa63d28f26829ce3e483d39d5",
+  "nextblockhash": "00000037a13cde01240c1c81cd27b0cf9487d1237bddbf9c1714e3c93000a708",
+  "strippedsize": 568,
+  "size": 823,
+  "weight": 2527,
+  "tx": [
+    "e72a45e7ca5618abe201d842faf0bf3a2933728ea52396b32c5c6f0c5256b583",
+    "c834a9e951cf736f11191522477929813855153c6fd6bf1bc818843ad40c6633",
+    "40a84ee492436c3bcaa139b2e9fb5c423bbe2b9db693723a885d46ab5a48d564"
+  ]
+}
+
+*/
+
+
+
+
+/*
+ bitcoin-cli getblock 000000b99cf68cf948929e7049c76ac850bcee358b93ecf7a1ca9b025549cf72 3
+{
+  "hash": "000000b99cf68cf948929e7049c76ac850bcee358b93ecf7a1ca9b025549cf72",
+  "confirmations": 7123,
+  "height": 182828,
+  "version": 536870912,
+  "versionHex": "20000000",
+  "merkleroot": "1c66ef9ddd32c82f34c46957dbdbb47c82b65339ef6cd4c887f4439a6c1bcfb8",
+  "time": 1708050260,
+  "mediantime": 1708049317,
+  "nonce": 13213614,
+  "bits": "1e014bc9",
+  "difficulty": 0.003013952620765979,
+  "chainwork": "0000000000000000000000000000000000000000000000000000020f95dc936d",
+  "nTx": 3,
+  "previousblockhash": "000000686b1557eb6752233848c72e20edeb4c9aa63d28f26829ce3e483d39d5",
+  "nextblockhash": "00000037a13cde01240c1c81cd27b0cf9487d1237bddbf9c1714e3c93000a708",
+  "strippedsize": 568,
+  "size": 823,
+  "weight": 2527,
+  "tx": [
+    {
+      "txid": "e72a45e7ca5618abe201d842faf0bf3a2933728ea52396b32c5c6f0c5256b583",
+      "hash": "e7911789d3bd936c2b902bb274b6d78791fe88a2c1899bd61fb44d7f607806c7",
+      "version": 2,
+      "size": 273,
+      "vsize": 246,
+      "weight": 984,
+      "locktime": 0,
+      "vin": [
+        {
+          "coinbase": "032cca020a2f7369676e65743a332f",
+          "txinwitness": [
+            "0000000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "sequence": 4294967294
+        }
+      ],
+      "vout": [
+        {
+          "value": 50.00002981,
+          "n": 0,
+          "scriptPubKey": {
+            "asm": "1 7099e4b23427fc40ba4777bbf52cfd0b7444d69a3e21ef281270723f54c0c14b",
+            "desc": "rawtr(7099e4b23427fc40ba4777bbf52cfd0b7444d69a3e21ef281270723f54c0c14b)#gshgfzzk",
+            "hex": "51207099e4b23427fc40ba4777bbf52cfd0b7444d69a3e21ef281270723f54c0c14b",
+            "address": "tb1pwzv7fv35yl7ypwj8w7al2t8apd6yf4568cs772qjwper74xqc99sk8x7tk",
+            "type": "witness_v1_taproot"
+          }
+        },
+        {
+          "value": 0.00000000,
+          "n": 1,
+          "scriptPubKey": {
+            "asm": "OP_RETURN aa21a9edc32933b69752984b6bd38f53b554b01adfaf0bd2d2f097e413c80153400db776 ecc7daa24900473044022055188511f975d88c04b483fab9454184b0e7f65409298eaa2c19eda7c7a7f5e9022069eb1cc205c98594334aec33e2fc8d997381e8ebb5839b9b3e0e99e5b57a6bb10100",
+            "desc": "raw(6a24aa21a9edc32933b69752984b6bd38f53b554b01adfaf0bd2d2f097e413c80153400db7764c4fecc7daa24900473044022055188511f975d88c04b483fab9454184b0e7f65409298eaa2c19eda7c7a7f5e9022069eb1cc205c98594334aec33e2fc8d997381e8ebb5839b9b3e0e99e5b57a6bb10100)#mmq4kxkp",
+            "hex": "6a24aa21a9edc32933b69752984b6bd38f53b554b01adfaf0bd2d2f097e413c80153400db7764c4fecc7daa24900473044022055188511f975d88c04b483fab9454184b0e7f65409298eaa2c19eda7c7a7f5e9022069eb1cc205c98594334aec33e2fc8d997381e8ebb5839b9b3e0e99e5b57a6bb10100",
+            "type": "nulldata"
+          }
+        }
+      ],
+      "hex": "020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff0f032cca020a2f7369676e65743a332ffeffffff02a5fd052a010000002251207099e4b23427fc40ba4777bbf52cfd0b7444d69a3e21ef281270723f54c0c14b0000000000000000776a24aa21a9edc32933b69752984b6bd38f53b554b01adfaf0bd2d2f097e413c80153400db7764c4fecc7daa24900473044022055188511f975d88c04b483fab9454184b0e7f65409298eaa2c19eda7c7a7f5e9022069eb1cc205c98594334aec33e2fc8d997381e8ebb5839b9b3e0e99e5b57a6bb101000120000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "txid": "c834a9e951cf736f11191522477929813855153c6fd6bf1bc818843ad40c6633",
+      "hash": "004f1b0e75407a06934f4fc1519280b5de9065326fc20057228af44b42783566",
+      "version": 2,
+      "size": 234,
+      "vsize": 153,
+      "weight": 609,
+      "locktime": 182827,
+      "vin": [
+        {
+          "txid": "3539bb10ca866845fe415c4881ca5dd30504309d3d1bb5781ca908c0e7ecf43f",
+          "vout": 1,
+          "scriptSig": {
+            "asm": "",
+            "hex": ""
+          },
+          "txinwitness": [
+            "304402200b39b57310d63a2226e216febba2c2fd46edbc560b3b05bdd88097faeba00c3602202d3737e5c8ee83e122f453a21ccbd49b86632417550341f1e23bada605318ec301",
+            "03c3d3a2967e6859f3b852cb986a955ab65085fc22207fd3e8a65d0f0c83a61bc2"
+          ],
+          "prevout": {
+            "generated": false,
+            "height": 182822,
+            "value": 69146.65330276,
+            "scriptPubKey": {
+              "asm": "0 a0f0cb301f1d531f06a8f98c055fefb5dfe264f6",
+              "desc": "addr(tb1q5rcvkvqlr4f37p4glxxq2hl0kh07ye8kmatutq)#dydxvxyw",
+              "hex": "0014a0f0cb301f1d531f06a8f98c055fefb5dfe264f6",
+              "address": "tb1q5rcvkvqlr4f37p4glxxq2hl0kh07ye8kmatutq",
+              "type": "witness_v0_keyhash"
+            }
+          },
+          "sequence": 4294967294
+        }
+      ],
+      "vout": [
+        {
+          "value": 69146.64327795,
+          "n": 0,
+          "scriptPubKey": {
+            "asm": "0 ee617b20620ca403e2dc7dddc2ff41e541fb3873",
+            "desc": "addr(tb1qaeshkgrzpjjq8cku0hwu9l6pu4qlkwrn7n3f2q)#xcc0t2fp",
+            "hex": "0014ee617b20620ca403e2dc7dddc2ff41e541fb3873",
+            "address": "tb1qaeshkgrzpjjq8cku0hwu9l6pu4qlkwrn7n3f2q",
+            "type": "witness_v0_keyhash"
+          }
+        },
+        {
+          "value": 0.01000000,
+          "n": 1,
+          "scriptPubKey": {
+            "asm": "1 cab25936602ef217643ae1a2f1c15ea738348528295c87bb83ee54f2dce7afd3",
+            "desc": "rawtr(cab25936602ef217643ae1a2f1c15ea738348528295c87bb83ee54f2dce7afd3)#u5rdu8y0",
+            "hex": "5120cab25936602ef217643ae1a2f1c15ea738348528295c87bb83ee54f2dce7afd3",
+            "address": "tb1pe2e9jdnq9mepwep6ux30rs275uurfpfg99wg0wurae209h884lfsufp4yn",
+            "type": "witness_v1_taproot"
+          }
+        }
+      ],
+      "fee": 0.00002481,
+      "hex": "020000000001013ff4ece7c008a91c78b51b3d9d300405d35dca81485c41fe456886ca10bb39350100000000feffffff02736a1cf249060000160014ee617b20620ca403e2dc7dddc2ff41e541fb387340420f0000000000225120cab25936602ef217643ae1a2f1c15ea738348528295c87bb83ee54f2dce7afd30247304402200b39b57310d63a2226e216febba2c2fd46edbc560b3b05bdd88097faeba00c3602202d3737e5c8ee83e122f453a21ccbd49b86632417550341f1e23bada605318ec3012103c3d3a2967e6859f3b852cb986a955ab65085fc22207fd3e8a65d0f0c83a61bc22bca0200"
+    },
+    {
+      "txid": "40a84ee492436c3bcaa139b2e9fb5c423bbe2b9db693723a885d46ab5a48d564",
+      "hash": "bff643b202b484020c909c2bf8ce6532daf143d306c622e3ff60671ec189763c",
+      "version": 2,
+      "size": 235,
+      "vsize": 153,
+      "weight": 610,
+      "locktime": 0,
+      "vin": [
+        {
+          "txid": "aec3e65de3a62ea4253e2f00e317ce1c4c4ed0af649ef6ade722ead654ead255",
+          "vout": 1,
+          "scriptSig": {
+            "asm": "",
+            "hex": ""
+          },
+          "txinwitness": [
+            "3045022100c6bee754b76d8b2001f2f640d1bec92460e6dd4e99c8f76f796630cd773b9ae90220420f0968f5617b254d595c683b473901392c5331f0fd87324c0575583564a29101",
+            "03634d38e0306a1623db98da1e229eed182b0c61811bdcc26cba5c8373a5df8441"
+          ],
+          "prevout": {
+            "generated": false,
+            "height": 182599,
+            "value": 0.00698500,
+            "scriptPubKey": {
+              "asm": "0 0a70b8068c6c24946a9e41c23e5bb4084f5266a0",
+              "desc": "addr(tb1qpfctsp5vdsjfg657g8pruka5pp84ye4q9g6u3r)#8wc42ge0",
+              "hex": "00140a70b8068c6c24946a9e41c23e5bb4084f5266a0",
+              "address": "tb1qpfctsp5vdsjfg657g8pruka5pp84ye4q9g6u3r",
+              "type": "witness_v0_keyhash"
+            }
+          },
+          "sequence": 4294967295
+        }
+      ],
+      "vout": [
+        {
+          "value": 0.00010000,
+          "n": 0,
+          "scriptPubKey": {
+            "asm": "1 958ac21b7cbab588125fe55b88a7aa8a16b6fd73fb72a6b10e62808aec6d8712",
+            "desc": "rawtr(958ac21b7cbab588125fe55b88a7aa8a16b6fd73fb72a6b10e62808aec6d8712)#3wlnfwg9",
+            "hex": "5120958ac21b7cbab588125fe55b88a7aa8a16b6fd73fb72a6b10e62808aec6d8712",
+            "address": "tb1pjk9vyxmuh26csyjlu4dc3fa23gttdltnlde2dvgwv2qg4mrdsufqfg5q2e",
+            "type": "witness_v1_taproot"
+          }
+        },
+        {
+          "value": 0.00688000,
+          "n": 1,
+          "scriptPubKey": {
+            "asm": "0 0a70b8068c6c24946a9e41c23e5bb4084f5266a0",
+            "desc": "addr(tb1qpfctsp5vdsjfg657g8pruka5pp84ye4q9g6u3r)#8wc42ge0",
+            "hex": "00140a70b8068c6c24946a9e41c23e5bb4084f5266a0",
+            "address": "tb1qpfctsp5vdsjfg657g8pruka5pp84ye4q9g6u3r",
+            "type": "witness_v0_keyhash"
+          }
+        }
+      ],
+      "fee": 0.00000500,
+      "hex": "0200000000010155d2ea54d6ea22e7adf69e64afd04e4c1cce17e3002f3e25a42ea6e35de6c3ae0100000000ffffffff021027000000000000225120958ac21b7cbab588125fe55b88a7aa8a16b6fd73fb72a6b10e62808aec6d8712807f0a00000000001600140a70b8068c6c24946a9e41c23e5bb4084f5266a002483045022100c6bee754b76d8b2001f2f640d1bec92460e6dd4e99c8f76f796630cd773b9ae90220420f0968f5617b254d595c683b473901392c5331f0fd87324c0575583564a291012103634d38e0306a1623db98da1e229eed182b0c61811bdcc26cba5c8373a5df844100000000"
+    }
+  ]
+}
+
+*/
+
+
+
+//MANUAL DECODING OF A COINBASE TRANSACTION (V2 SEGWIT)
+/*
+02000000
+00
+01
+01
+0000000000000000000000000000000000000000000000000000000000000000
+ffffffff
+0f // coinbase size
+032cca020a2f7369676e65743a332f //COINBASE
+feffffff //sequence
+02
+a5fd052a01000000 value of the output
+22
+51207099e4b23427fc40ba4777bbf52cfd0b7444d69a3e21ef281270723f54c0c14b
+0000000000000000 value of the output
+77
+6a24aa21a9edc32933b69752984b6bd38f53b554b01adfaf0bd2d2f097e413c80153400db7764c4fecc7daa24900473044022055188511f975d88c04b483fab9454184b0e7f65409298eaa2c19eda7c7a7f5e9022069eb1cc205c98594334aec33e2fc8d997381e8ebb5839b9b3e0e99e5b57a6bb10100 //op_return
+01
+20 // witness size
+0000000000000000000000000000000000000000000000000000000000000000 ? witness
+00000000 // locktime
+*/

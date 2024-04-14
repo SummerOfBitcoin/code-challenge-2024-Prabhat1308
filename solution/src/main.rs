@@ -1,5 +1,7 @@
-use solution::run;
+use solution::{run,test_txid,find_pure_p2sh};
 
 fn main() {
-   run();
+   //run();
+   test_txid();
+   //find_pure_p2sh();
 }
