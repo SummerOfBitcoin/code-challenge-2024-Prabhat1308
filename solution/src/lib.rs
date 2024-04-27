@@ -1,25 +1,19 @@
-use byteorder::WriteBytesExt;
-use byteorder::{BigEndian, ByteOrder, LittleEndian};
-use core::{hash, num, panic};
-use libsecp256k1::{verify, Message, PublicKey, SecretKey, Signature};
+use core::panic;
+use libsecp256k1::{verify, Message, PublicKey, Signature};
 use ripemd::Ripemd160;
 use serde::Deserialize;
-use serde_json::Value;
-use sha2::digest::generic_array::sequence;
+
 use sha2::Digest;
-use sha2::{Sha256, Sha512};
-use std::char::MAX;
+use sha2::Sha256;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fs;
 use std::fs::write;
-use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use num_bigint::BigUint;
-use num_traits::FromPrimitive;
 
 #[derive(Deserialize, Clone, PartialEq, Eq, Hash, Debug)]
 struct Transaction {
