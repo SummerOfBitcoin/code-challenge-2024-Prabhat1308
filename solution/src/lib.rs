@@ -95,7 +95,7 @@ pub fn run() {
     let coinbase_in_decoded = hex::decode(coinbase_in).unwrap();
     valid_wtxid.push(coinbase_in_decoded);
 
-    for entry in fs::read_dir("../mempool").unwrap() {
+    for entry in fs::read_dir("./mempool").unwrap() {
         let tx: Transaction =
             serde_json::from_str(&fs::read_to_string(entry.unwrap().path()).unwrap()).unwrap();
 
@@ -224,7 +224,7 @@ pub fn run() {
     blockdata.extend(accepted_txs);
 
     // Output the block in a output.txt file
-    write_to_file(blockdata, "../output.txt").unwrap();
+    write_to_file(blockdata, "./output.txt").unwrap();
 }
 
 fn correct_cal_weight(non_witness: Vec<u8>, witness_and_markerflag: Vec<u8>) -> u64 {
